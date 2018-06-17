@@ -22,11 +22,11 @@
                 <td>{{ article.slug }}</td>
             </tr>
             <tr>
-                <th>Createdat</th>
+                <th>CreatedAt</th>
                 <td>{% if article.createdAt %}{{ article.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
             </tr>
             <tr>
-                <th>Updatedat</th>
+                <th>UpdatedAt</th>
                 <td>{% if article.updatedAt %}{{ article.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
             </tr>
             <tr>

@@ -1,3 +1,7 @@
+app_product:
+    resource: "@AppBundle/Controller/ProductController.php"
+    type:     annotation
+
 app_article:
     resource: "@AppBundle/Controller/ArticleController.php"
     type:     annotation
