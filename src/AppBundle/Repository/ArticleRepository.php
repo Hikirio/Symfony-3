@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Article;
+
 /**
  * ArticleRepository
  *
@@ -10,4 +12,13 @@ namespace AppBundle\Repository;
  */
 class ArticleRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getTitleByArticle( $string)
+    {
+        return $this->createQueryBuilder('art')
+            ->where('art.title LIKE :string' )
+            ->setParameter('string','%'.$string.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
 }

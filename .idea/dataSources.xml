@@ -15,11 +15,11 @@
         <property name="yearIsDateType" value="false" />
       </driver-properties>
     </data-source>
-    <data-source source="LOCAL" name="cuctom_blog@localhost" uuid="06b85b3c-becb-4935-a263-4d9e13b49f1b">
+    <data-source source="LOCAL" name="symfony@localhost" uuid="488407a1-a6ae-4e45-8771-41ec621ff30d">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/cuctom_blog</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/symfony</jdbc-url>
       <driver-properties>
         <property name="autoReconnect" value="true" />
         <property name="zeroDateTimeBehavior" value="convertToNull" />

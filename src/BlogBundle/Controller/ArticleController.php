@@ -4,6 +4,7 @@ namespace BlogBundle\Controller;
 
 use AppBundle\Entity\Article;
 use AppBundle\Entity\Category;
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,9 +32,13 @@ class ArticleController extends Controller
         $articleRepos = $this->getDoctrine()->getRepository(Article::class);
         $articles = $articleRepos->findAll();
 
+        $userRepos = $this->getDoctrine()->getRepository(User::class);
+        $users = $userRepos->findAll();
+
         return $this->render('@Blog/Article/article_list.html.twig', [
             'articles' => $articles,
             'categories' =>$categories,
+            'users' =>$users,
         ]);
     }
 

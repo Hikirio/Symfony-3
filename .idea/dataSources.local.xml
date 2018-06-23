@@ -7,11 +7,15 @@
       <first-sync>true</first-sync>
       <user-name>root</user-name>
     </data-source>
-    <data-source name="cuctom_blog@localhost" uuid="06b85b3c-becb-4935-a263-4d9e13b49f1b">
-      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+    <data-source name="symfony@localhost" uuid="488407a1-a6ae-4e45-8771-41ec621ff30d">
+      <database-info product="MySQL" version="5.7.22-0ubuntu0.16.04.1" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.46 ( Revision: 9cc87a48e75c2d2e87c1a293b2862ce651cb256e )">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
-      <first-sync>true</first-sync>
       <user-name>root</user-name>
+      <introspection-schemas>*:symfony</introspection-schemas>
     </data-source>
   </component>
 </project>

@@ -3,9 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Article;
+use AppBundle\Form\ArticleType;
+use AppBundle\Form\SearchArticle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Article controller.
@@ -22,16 +25,13 @@ class ArticleController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $articles = $em
-            ->getRepository('AppBundle:Article')
-            ->findAll();
-
-        dump($articles);
-
-        return $this->render('article/index.html.twig', array(
-            'articles' => $articles,
+//        $em = $this->getDoctrine()->getManager();
+//        $articles = $em
+//            ->getRepository('AppBundle:Article')
+//            ->findAll();
+        $articleRepos = $this->getDoctrine()->getRepository('AppBundle:Article')->getTitleByArticle('');
+        return $this->render('article/SearchArticle.html.twig', array(
+            'articles' => $articleRepos,
         ));
     }
 
@@ -46,22 +46,49 @@ class ArticleController extends Controller
     public function newAction(Request $request)
     {
         $article = new Article();
-        $form = $this->createForm('AppBundle\Form\ArticleType', $article);
+        $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($article);
-            $em->flush();
-
+            $articleManager = $this->get("blog.article_manager.service");
+            $articleManager->articleCreate($article);
             return $this->redirectToRoute('article_show', array('id' => $article->getId()));
         }
-
         return $this->render('article/new.html.twig', array(
             'article' => $article,
             'form' => $form->createView(),
         ));
     }
+
+
+    /**
+     * Creates a new article entity.
+     *
+     * @Route("/search", name="search")
+     * @Method({"GET", "POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function searchAction(Request $request)
+    {
+        $form = $this->createForm(SearchArticle::class);
+        $form->handleRequest($request);
+        $articles = null;
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+
+            $searchResult = $this->getDoctrine()->getRepository(Article::class);
+            $articles = $searchResult->getTitleByArticle($data['search']);
+
+
+
+        }
+        return $this->render('article/SearchArticle.html.twig', array(
+            'form' => $form->createView(),
+            'articles' => $articles
+        ));
+    }
+
 
     /**
      * Finds and displays a article entity.
@@ -72,7 +99,6 @@ class ArticleController extends Controller
     public function showAction(Article $article)
     {
         $deleteForm = $this->createDeleteForm($article);
-
         return $this->render('article/show.html.twig', array(
             'article' => $article,
             'delete_form' => $deleteForm->createView(),
@@ -90,13 +116,10 @@ class ArticleController extends Controller
         $deleteForm = $this->createDeleteForm($article);
         $editForm = $this->createForm('AppBundle\Form\ArticleType', $article);
         $editForm->handleRequest($request);
-
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
             return $this->redirectToRoute('article_edit', array('id' => $article->getId()));
         }
-
         return $this->render('article/edit.html.twig', array(
             'article' => $article,
             'edit_form' => $editForm->createView(),
@@ -114,13 +137,11 @@ class ArticleController extends Controller
     {
         $form = $this->createDeleteForm($article);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($article);
             $em->flush();
         }
-
         return $this->redirectToRoute('article_index');
     }
 
@@ -136,7 +157,6 @@ class ArticleController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('article_delete', array('id' => $article->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }
