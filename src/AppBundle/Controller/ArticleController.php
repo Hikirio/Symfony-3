@@ -25,15 +25,16 @@ class ArticleController extends Controller
      */
     public function indexAction()
     {
-//        $em = $this->getDoctrine()->getManager();
-//        $articles = $em
-//            ->getRepository('AppBundle:Article')
-//            ->findAll();
-        $articleRepos = $this->getDoctrine()->getRepository('AppBundle:Article')->getTitleByArticle('');
-        return $this->render('article/SearchArticle.html.twig', array(
-            'articles' => $articleRepos,
+        $em = $this->getDoctrine()->getManager();
+        $articles = $em
+            ->getRepository('AppBundle:Article')
+            ->findAll();
+        dump($articles);
+        return $this->render('article/index.html.twig', array(
+            'articles' => $articles,
         ));
     }
+
 
     /**
      * Creates a new article entity.

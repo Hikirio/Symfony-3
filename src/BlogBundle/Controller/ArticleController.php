@@ -4,7 +4,10 @@ namespace BlogBundle\Controller;
 
 use AppBundle\Entity\Article;
 use AppBundle\Entity\Category;
+
+
 use AppBundle\Entity\User;
+use BlogBundle\Form\Search;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -20,11 +23,13 @@ class ArticleController extends Controller
     /**
      * Lists all article entities.
      *
-     * @Route("/blog-list", name="blog_article_list")
+     * @Route("/list", name="blog_article_list")
      *
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $usersRepos = $this->getDoctrine()->getRepository(User::class);
+        $users = $usersRepos->findAll();
 
         $categoryRepos = $this->getDoctrine()->getRepository(Category::class);
         $categories = $categoryRepos->findAll();
@@ -32,18 +37,33 @@ class ArticleController extends Controller
         $articleRepos = $this->getDoctrine()->getRepository(Article::class);
         $articles = $articleRepos->findAll();
 
-        $userRepos = $this->getDoctrine()->getRepository(User::class);
-        $users = $userRepos->findAll();
+        $form = $this->createForm(Search::class);
+        $form->handleRequest($request);
+        $art = null;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+
+            $searchResult = $this->getDoctrine()->getRepository(Article::class);
+            $art = $searchResult->getTitleByArticle($data['search']);
+
+
+            return $this->render('@Blog/Article/article_list.html.twig', [
+                'form' => $form->createView(),
+                'articles' => $art,
+                'categories' => $categories,
+                'users'=> $users,
+            ]);
+        }
 
         return $this->render('@Blog/Article/article_list.html.twig', [
+            'form' => $form->createView(),
             'articles' => $articles,
-            'categories' =>$categories,
-            'users' =>$users,
+            'categories' => $categories,
+            'users'=> $users,
         ]);
     }
-
-
-
 
 
     /**
@@ -82,9 +102,13 @@ class ArticleController extends Controller
      */
     public function showAction(Article $article)
     {
+        $usersRepos = $this->getDoctrine()->getRepository(User::class);
+        $users = $usersRepos->findAll();
+
 
         return $this->render('@Blog/Article/article_show.html.twig', [
             'article' => $article,
+            'users'=> $users,
 
         ]);
     }
@@ -145,7 +169,34 @@ class ArticleController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('blog_article_delete', ['id' => $article->getId()]))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
+    }
+
+    /**
+     * Creates a new article entity.
+     *
+     * @Route("/search", name="search")
+     * @Method({"GET", "POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function searchAction(Request $request)
+    {
+        $form = $this->createForm(SearchArticle::class);
+        $form->handleRequest($request);
+        $articles = null;
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+
+            $searchResult = $this->getDoctrine()->getRepository(Article::class);
+            $articles = $searchResult->getTitleByArticle($data['search']);
+
+
+        }
+        return $this->render('article/SearchArticle.html.twig', array(
+            'form' => $form->createView(),
+            'articles' => $articles
+        ));
     }
 }

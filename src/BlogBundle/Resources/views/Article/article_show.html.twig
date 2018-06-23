@@ -21,13 +21,13 @@
             </div>
             <div class="card-footer text-muted">
                 Posted on {{ article.createdAt| date('M d, Y') }} by
-                <a href="#">
-
+                {% for user in article.getUsers() %}
+                <a href="#">{{ user }}</a>
+                {% endfor %}
                 </a>
             </div>
             <a href="{{ path('blog_article_list') }}">Back to the list</a>
         </div>
-
 
 
     </div>
